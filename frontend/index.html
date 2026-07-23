@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel='stylesheet' href='style.css'>
+    <script src='function.js' defer></script>
+    <title>Netflix Clone</title>
+</head>
+<body data-page="home">
+    <div class="container">
+        <header>
+            <h1>Netflix Clone</h1>
+            <form class="search-form">
+                <input type="text" class="search-input" placeholder="Search movies...">
+                <button type="submit">Search</button>
+            </form>
+            <div class="user-bar">
+                <a class="profile-link" href="profile.html">Profile</a>
+                <span class="user-email"></span>
+                <button type="button" class="logout-btn">Sign Out</button>
+            </div>
+        </header>
+        <main>
+            <section class="movie-list">
+                <!-- Movie items will be dynamically inserted here -->
+            </section>
+        </main>
+    </div>
+
+    <div class="movie-modal hidden">
+        <div class="movie-modal-content">
+            <button type="button" class="close-modal">&times;</button>
+            <h2 class="modal-title"></h2>
+            <p class="modal-plot"></p>
+            <p class="modal-cast"><strong>Cast:</strong> <span></span></p>
+        </div>
+    </div>
+</body>
+</html>

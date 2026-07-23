@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="landing.css">
+    <script src="landing.js" defer></script>
+    <title>Netflix Clone - Unlimited movies, TV shows, and more</title>
+</head>
+<body>
+    <div class="hero">
+        <header class="top-bar">
+            <div class="logo">NETFLIXCLONE</div>
+            <button type="button" class="signin-btn" data-open-auth="signin">Sign In</button>
+        </header>
+
+        <div class="hero-content">
+            <h1>Unlimited movies, TV shows, and more.</h1>
+            <p class="hero-sub">Watch anywhere. Cancel anytime.</p>
+            <p class="hero-sub-small">Ready to watch? Enter your email to create or sign in to your account.</p>
+
+            <form class="email-form" data-open-auth="signup">
+                <input type="email" name="email" class="hero-email" placeholder="Email address" required>
+                <button type="submit" class="cta-btn">Get Started <span class="arrow">&rsaquo;</span></button>
+            </form>
+        </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <section class="feature-row">
+        <div class="feature-text">
+            <h2>Enjoy on your TV</h2>
+            <p>Watch on smart TVs, PlayStation, Xbox, Chromecast, Apple TV, Blu-ray players, and more.</p>
+        </div>
+        <div class="feature-visual tv-visual">
+            <div class="tv-frame">
+                <div class="tv-screen"></div>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <section class="feature-row reverse">
+        <div class="feature-text">
+            <h2>Download your shows to watch offline</h2>
+            <p>Save your favorites easily and always have something to watch.</p>
+        </div>
+        <div class="feature-visual download-visual">
+            <div class="download-card">
+                <span class="download-title">Interstellar</span>
+                <span class="download-progress"></span>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <section class="feature-row">
+        <div class="feature-text">
+            <h2>Watch everywhere</h2>
+            <p>Stream unlimited movies and TV shows on your phone, tablet, laptop, and TV.</p>
+        </div>
+        <div class="feature-visual devices-visual">
+            <div class="device laptop"></div>
+            <div class="device phone"></div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <section class="feature-row reverse">
+        <div class="feature-text">
+            <h2>Create profiles for kids</h2>
+            <p>Send kids on adventures with their favorite characters in a space made just for them.</p>
+        </div>
+        <div class="feature-visual profiles-visual">
+            <div class="profile-avatar"></div>
+            <div class="profile-avatar kid"></div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <section class="faq">
+        <h2>Frequently Asked Questions</h2>
+
+        <details class="faq-item">
+            <summary>What is Netflix Clone?</summary>
+            <p>Netflix Clone is a demo project for browsing and searching movies, built with a Node/Express backend and the OMDb API.</p>
+        </details>
+
+        <details class="faq-item">
+            <summary>How much does it cost?</summary>
+            <p>This is a personal project - it's free to run locally.</p>
+        </details>
+
+        <details class="faq-item">
+            <summary>Where can I watch?</summary>
+            <p>Anywhere you can run this project - it's a browser-based demo app.</p>
+        </details>
+
+        <details class="faq-item">
+            <summary>How do I search for movies?</summary>
+            <p>Sign in to browse, then use the search bar to look up any title via the OMDb database, including posters, synopsis, and cast.</p>
+        </details>
+
+        <form class="email-form faq-cta" data-open-auth="signup">
+            <input type="email" name="email" class="faq-email" placeholder="Email address" required>
+            <button type="submit" class="cta-btn">Get Started <span class="arrow">&rsaquo;</span></button>
+        </form>
+    </section>
+
+    <footer class="site-footer">
+        <p class="footer-questions">Questions? Sign in to browse the app.</p>
+        <div class="footer-links">
+            <a href="#" data-open-auth="signin">Browse Movies</a>
+            <a href="#" data-open-auth="signin">Search</a>
+            <a href="#">Help Center</a>
+            <a href="#">Terms of Use</a>
+            <a href="#">Privacy</a>
+            <a href="#">About</a>
+        </div>
+    </footer>
+
+    <div class="auth-modal hidden">
+        <div class="auth-modal-content">
+            <button type="button" class="close-auth-modal">&times;</button>
+            <h2 class="auth-title">Sign Up</h2>
+            <p class="auth-error hidden"></p>
+            <form class="auth-form">
+                <input type="email" class="auth-email" placeholder="Email address" required>
+                <input type="password" class="auth-password" placeholder="Password (min. 6 characters)" required minlength="6">
+                <button type="submit" class="cta-btn auth-submit">Sign Up</button>
+            </form>
+            <p class="auth-toggle">
+                <span class="auth-toggle-text">Already have an account?</span>
+                <button type="button" class="auth-toggle-btn">Sign In</button>
+            </p>
+        </div>
+    </div>
+</body>
+</html>

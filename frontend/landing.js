@@ -1,5 +1,3 @@
-const AUTH_URL = 'http://localhost:3000/api/auth';
-
 let authMode = 'signup';
 
 const setAuthMode = (mode) => {
@@ -48,15 +46,12 @@ const closeAuthModal = () => {
 };
 
 const submitAuth = async (email, password) => {
-    const endpoint = authMode === 'signup' ? 'signup' : 'signin';
-    const response = await fetch(`${AUTH_URL}/${endpoint}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-    });
-    const data = await response.json();
-    if (!response.ok) {
-        throw new Error(data.error || 'Something went wrong');
+    const { data, error } = authMode === 'signup'
+        ? await supabaseClient.auth.signUp({ email, password })
+        : await supabaseClient.auth.signInWithPassword({ email, password });
+
+    if (error) {
+        throw new Error(error.message);
     }
     return data;
 };
@@ -95,8 +90,10 @@ const setupAuthModal = () => {
         const password = document.querySelector('.auth-password').value;
         try {
             const data = await submitAuth(email, password);
-            localStorage.setItem('authToken', data.token);
-            localStorage.setItem('authEmail', data.email);
+            if (!data.session) {
+                showAuthError('Check your email to confirm your account, then sign in.');
+                return;
+            }
             window.location.href = 'index.html';
         } catch (err) {
             showAuthError(err.message);

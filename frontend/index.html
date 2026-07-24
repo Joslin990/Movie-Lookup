@@ -4,18 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel='stylesheet' href='style.css'>
+    <script src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2' defer></script>
+    <script src='supabase-config.js' defer></script>
     <script src='function.js' defer></script>
     <title>Movie Lookup</title>
 </head>
 <body data-page="home">
     <div class="container">
         <header>
-            <h1>Movie Lookup</h1>
+            <h1><button type="button" class="brand-link browse-trigger">Movie Lookup</button></h1>
             <form class="search-form">
                 <input type="text" class="search-input" placeholder="Search movies...">
                 <button type="submit">Search</button>
             </form>
             <div class="user-bar">
+                <button type="button" class="nav-btn browse-trigger">Browse</button>
                 <a class="profile-link" href="profile.html">Profile</a>
                 <span class="user-email"></span>
                 <button type="button" class="logout-btn">Sign Out</button>
@@ -25,6 +28,8 @@
             <section class="movie-list">
                 <!-- Movie items will be dynamically inserted here -->
             </section>
+            <div class="scroll-sentinel"></div>
+            <p class="loading-more hidden">Loading more movies...</p>
         </main>
     </div>
 
@@ -36,5 +41,7 @@
             <p class="modal-cast"><strong>Cast:</strong> <span></span></p>
         </div>
     </div>
+
+    <button type="button" class="back-to-top hidden" aria-label="Back to top">&uarr;</button>
 </body>
 </html>

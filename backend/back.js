@@ -1,6 +1,6 @@
 require('dotenv').config({ path: __dirname + '/.env' });
 const express = require('express');
-const crypto = require('crypto');
+const { createClient } = require('@supabase/supabase-js');
 const app = express();
 const PORT = 3000;
 
@@ -15,98 +15,21 @@ app.use((req, res, next) => {
 const API_KEY = process.env.API_KEY;
 const API_URL = "http://www.omdbapi.com/?apikey=" + API_KEY + "&";
 
-let users = [];
-let sessions = {};
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 
-const hashPassword = (password, salt) => {
-    return crypto.scryptSync(password, salt, 64).toString('hex');
-};
-
-const createSession = (userId) => {
-    const token = crypto.randomBytes(32).toString('hex');
-    sessions[token] = userId;
-    return token;
-};
-
-const getUserFromRequest = (req) => {
+const requireUser = async (req, res, next) => {
     const authHeader = req.headers.authorization || '';
     const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null;
-    const userId = token && sessions[token];
-    return users.find(u => u.id === userId) || null;
-};
-
-const requireUser = (req, res, next) => {
-    const user = getUserFromRequest(req);
-    if (!user) {
+    if (!token) {
         return res.status(401).json({ error: 'Not authenticated' });
     }
-    req.user = user;
+    const { data, error } = await supabase.auth.getUser(token);
+    if (error || !data.user) {
+        return res.status(401).json({ error: 'Not authenticated' });
+    }
+    req.user = data.user;
     next();
 };
-
-app.post('/api/auth/signup', (req, res) => {
-    const { email, password } = req.body;
-    if (!email || !password) {
-        return res.status(400).json({ error: 'Email and password are required' });
-    }
-    if (password.length < 6) {
-        return res.status(400).json({ error: 'Password must be at least 6 characters' });
-    }
-    if (users.find(u => u.email === email)) {
-        return res.status(409).json({ error: 'An account with that email already exists' });
-    }
-
-    const salt = crypto.randomBytes(16).toString('hex');
-    const user = {
-        id: users.length + 1,
-        email,
-        salt,
-        passwordHash: hashPassword(password, salt),
-        favorites: []
-    };
-    users.push(user);
-
-    const token = createSession(user.id);
-    res.status(201).json({ token, email: user.email });
-});
-
-app.post('/api/auth/signin', (req, res) => {
-    const { email, password } = req.body;
-    if (!email || !password) {
-        return res.status(400).json({ error: 'Email and password are required' });
-    }
-
-    const user = users.find(u => u.email === email);
-    if (!user) {
-        return res.status(401).json({ error: 'Invalid email or password' });
-    }
-
-    const suppliedHash = Buffer.from(hashPassword(password, user.salt), 'hex');
-    const storedHash = Buffer.from(user.passwordHash, 'hex');
-    if (!crypto.timingSafeEqual(suppliedHash, storedHash)) {
-        return res.status(401).json({ error: 'Invalid email or password' });
-    }
-
-    const token = createSession(user.id);
-    res.json({ token, email: user.email });
-});
-
-app.get('/api/auth/me', (req, res) => {
-    const user = getUserFromRequest(req);
-    if (!user) {
-        return res.status(401).json({ error: 'Not authenticated' });
-    }
-    res.json({ email: user.email, favorites: user.favorites });
-});
-
-app.post('/api/auth/logout', (req, res) => {
-    const authHeader = req.headers.authorization || '';
-    const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null;
-    if (token) {
-        delete sessions[token];
-    }
-    res.status(204).end();
-});
 
 const CURATED_IMDB_IDS = [
     'tt1375666', // Inception
@@ -128,7 +51,56 @@ const CURATED_IMDB_IDS = [
     'tt0120338', // Titanic
     'tt0499549', // Avatar
     'tt7286456', // Joker
-    'tt0407887'  // The Departed
+    'tt0407887', // The Departed
+    'tt0071562', // The Godfather Part II
+    'tt0108052', // Schindler's List
+    'tt0167260', // The Lord of the Rings: The Return of the King
+    'tt0167261', // The Lord of the Rings: The Two Towers
+    'tt0120737', // The Lord of the Rings: The Fellowship of the Ring
+    'tt0080684', // Star Wars: Episode V - The Empire Strikes Back
+    'tt0076759', // Star Wars: Episode IV - A New Hope
+    'tt0086190', // Star Wars: Episode VI - Return of the Jedi
+    'tt0088763', // Back to the Future
+    'tt0102926', // The Silence of the Lambs
+    'tt0114814', // The Usual Suspects
+    'tt0118799', // Life Is Beautiful
+    'tt0361748', // Inglourious Basterds
+    'tt0993846', // The Wolf of Wall Street
+    'tt0910970', // WALL-E
+    'tt1049413', // Up
+    'tt0435761', // Toy Story 3
+    'tt0088247', // The Terminator
+    'tt0103064', // Terminator 2: Judgment Day
+    'tt0117951', // Trainspotting
+    'tt0209144', // Memento
+    'tt0338013', // Eternal Sunshine of the Spotless Mind
+    'tt0245429', // Spirited Away
+    'tt0086250', // Scarface
+    'tt0075314', // Taxi Driver
+    'tt0078788', // Apocalypse Now
+    'tt0034583', // Casablanca
+    'tt0050083', // 12 Angry Men
+    'tt0057012', // Dr. Strangelove
+    'tt0119488', // L.A. Confidential
+    'tt0120815', // Saving Private Ryan
+    'tt0126029', // Shrek
+    'tt0119217', // Good Will Hunting
+    'tt0268978', // A Beautiful Mind
+    'tt0180093', // Requiem for a Dream
+    'tt0169547', // American Beauty
+    'tt0105236', // Reservoir Dogs
+    'tt4633694', // Spider-Man: Into the Spider-Verse
+    'tt0113277', // Heat
+    'tt0107290', // Jurassic Park
+    'tt0116629', // Independence Day
+    'tt1345836', // The Dark Knight Rises
+    'tt0372784', // Batman Begins
+    'tt1877830', // The Batman
+    'tt4154756', // Avengers: Infinity War
+    'tt4154796', // Avengers: Endgame
+    'tt0848228', // The Avengers
+    'tt2015381', // Guardians of the Galaxy
+    'tt1130884'  // Shutter Island
 ];
 
 const getRandomSample = (arr, count) => {
@@ -137,7 +109,10 @@ const getRandomSample = (arr, count) => {
 };
 
 app.get('/api/movies', async (req, res) => {
-    const sampleIds = getRandomSample(CURATED_IMDB_IDS, 10);
+    const excludeIds = new Set((req.query.exclude || '').split(',').filter(Boolean));
+    const pool = CURATED_IMDB_IDS.filter(id => !excludeIds.has(id));
+    const sourceList = pool.length > 0 ? pool : CURATED_IMDB_IDS;
+    const sampleIds = getRandomSample(sourceList, Math.min(10, sourceList.length));
     try {
         const results = await Promise.all(sampleIds.map(async (imdbID) => {
             const omdbResponse = await fetch(`${API_URL}i=${imdbID}`);
@@ -150,9 +125,18 @@ app.get('/api/movies', async (req, res) => {
 });
 
 app.get('/api/favorites', requireUser, async (req, res) => {
+    const { data: rows, error: dbError } = await supabase
+        .from('favorites')
+        .select('imdb_id')
+        .eq('user_id', req.user.id);
+
+    if (dbError) {
+        return res.status(500).json({ error: 'Failed to load favorites' });
+    }
+
     try {
-        const results = await Promise.all(req.user.favorites.map(async (imdbID) => {
-            const omdbResponse = await fetch(`${API_URL}i=${encodeURIComponent(imdbID)}&plot=full`);
+        const results = await Promise.all(rows.map(async ({ imdb_id }) => {
+            const omdbResponse = await fetch(`${API_URL}i=${encodeURIComponent(imdb_id)}&plot=full`);
             return omdbResponse.json();
         }));
         res.json(results.filter(movie => movie.Response !== 'False'));
@@ -161,20 +145,33 @@ app.get('/api/favorites', requireUser, async (req, res) => {
     }
 });
 
-app.post('/api/favorites', requireUser, (req, res) => {
+app.post('/api/favorites', requireUser, async (req, res) => {
     const { imdbID } = req.body;
     if (!imdbID) {
         return res.status(400).json({ error: 'imdbID is required' });
     }
-    if (!req.user.favorites.includes(imdbID)) {
-        req.user.favorites.push(imdbID);
+
+    const { error: dbError } = await supabase
+        .from('favorites')
+        .upsert({ user_id: req.user.id, imdb_id: imdbID });
+
+    if (dbError) {
+        return res.status(500).json({ error: 'Failed to save favorite' });
     }
-    res.status(201).json({ favorites: req.user.favorites });
+    res.status(201).json({ imdbID });
 });
 
-app.delete('/api/favorites/:imdbID', requireUser, (req, res) => {
-    req.user.favorites = req.user.favorites.filter(id => id !== req.params.imdbID);
-    res.json({ favorites: req.user.favorites });
+app.delete('/api/favorites/:imdbID', requireUser, async (req, res) => {
+    const { error: dbError } = await supabase
+        .from('favorites')
+        .delete()
+        .eq('user_id', req.user.id)
+        .eq('imdb_id', req.params.imdbID);
+
+    if (dbError) {
+        return res.status(500).json({ error: 'Failed to remove favorite' });
+    }
+    res.status(204).end();
 });
 
 app.get('/api/search', async (req, res) => {
@@ -183,12 +180,31 @@ app.get('/api/search', async (req, res) => {
         return res.status(400).json({ error: 'Search query is required' });
     }
     try {
-        const omdbResponse = await fetch(`${API_URL}s=${encodeURIComponent(query)}`);
-        const data = await omdbResponse.json();
-        if (data.Response === 'False') {
-            return res.status(404).json({ error: data.Error });
+        const firstResponse = await fetch(`${API_URL}s=${encodeURIComponent(query)}`);
+        const firstData = await firstResponse.json();
+        if (firstData.Response === 'False') {
+            return res.status(404).json({ error: firstData.Error });
         }
-        res.json(data.Search);
+
+        // OMDb returns 10 results per page and only allows fetching up to 10 pages (100 results) total.
+        const totalPages = Math.min(Math.ceil(parseInt(firstData.totalResults, 10) / 10) || 1, 10);
+        let allResults = firstData.Search;
+
+        if (totalPages > 1) {
+            const remainingPages = await Promise.all(
+                Array.from({ length: totalPages - 1 }, (_, i) => i + 2).map(async (page) => {
+                    const pageResponse = await fetch(`${API_URL}s=${encodeURIComponent(query)}&page=${page}`);
+                    return pageResponse.json();
+                })
+            );
+            remainingPages.forEach(pageData => {
+                if (pageData.Response !== 'False' && pageData.Search) {
+                    allResults = allResults.concat(pageData.Search);
+                }
+            });
+        }
+
+        res.json(allResults);
     } catch (err) {
         res.status(502).json({ error: 'Failed to reach OMDb API' });
     }

@@ -4,13 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel='stylesheet' href='style.css'>
+    <script src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2' defer></script>
+    <script src='supabase-config.js' defer></script>
     <script src='function.js' defer></script>
     <title>My Favorites - Movie Lookup</title>
 </head>
 <body data-page="profile">
     <div class="container">
         <header>
-            <h1>Movie Lookup</h1>
+            <h1><button type="button" class="brand-link browse-trigger">Movie Lookup</button></h1>
             <div class="user-bar">
                 <a class="profile-link" href="index.html">Browse</a>
                 <span class="user-email"></span>
@@ -18,6 +20,26 @@
             </div>
         </header>
         <main>
+            <section class="settings-section">
+                <h2 class="page-heading">Account Settings</h2>
+
+                <form class="settings-form name-form">
+                    <label for="display-name">Name</label>
+                    <input type="text" id="display-name" class="settings-input" placeholder="Your name">
+                    <button type="submit" class="settings-btn">Save Name</button>
+                    <p class="settings-message name-message hidden"></p>
+                </form>
+
+                <form class="settings-form password-form">
+                    <label for="new-password">New Password</label>
+                    <input type="password" id="new-password" class="settings-input" placeholder="New password" minlength="6" required>
+                    <label for="confirm-password">Confirm Password</label>
+                    <input type="password" id="confirm-password" class="settings-input" placeholder="Confirm new password" minlength="6" required>
+                    <button type="submit" class="settings-btn">Update Password</button>
+                    <p class="settings-message password-message hidden"></p>
+                </form>
+            </section>
+
             <h2 class="page-heading">My Favorites</h2>
             <section class="movie-list">
                 <!-- Favorited movies will be dynamically inserted here -->
@@ -33,5 +55,7 @@
             <p class="modal-cast"><strong>Cast:</strong> <span></span></p>
         </div>
     </div>
+
+    <button type="button" class="back-to-top hidden" aria-label="Back to top">&uarr;</button>
 </body>
 </html>

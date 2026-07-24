@@ -25,11 +25,23 @@ header {
 }
 
 header h1 {
+    margin: 0;
+}
+
+.brand-link {
+    background: none;
+    border: none;
+    padding: 0;
+    font-family: inherit;
     color: #e50914;
     font-size: 1.8rem;
     font-weight: 800;
     letter-spacing: 1px;
-    margin: 0;
+    cursor: pointer;
+}
+
+.brand-link:hover {
+    color: #f6121d;
 }
 
 /* ---------- Search form ---------- */
@@ -109,6 +121,88 @@ header h1 {
     color: #e50914;
 }
 
+.nav-btn {
+    background: none;
+    color: #fff;
+    font-size: 0.9rem;
+    border: 1px solid #8c8c8c;
+    padding: 0.4rem 0.9rem;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.nav-btn:hover {
+    border-color: #e50914;
+    color: #e50914;
+}
+
+/* ---------- Account settings ---------- */
+
+.settings-section {
+    max-width: 400px;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #333;
+}
+
+.settings-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.settings-form label {
+    font-size: 0.9rem;
+    color: #ccc;
+}
+
+.settings-input {
+    padding: 0.6rem 1rem;
+    font-size: 1rem;
+    border: 1px solid #8c8c8c;
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    border-radius: 3px;
+}
+
+.settings-input::placeholder {
+    color: #ccc;
+}
+
+.settings-btn {
+    align-self: flex-start;
+    background-color: #e50914;
+    color: #fff;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.settings-btn:hover {
+    background-color: #f6121d;
+}
+
+.settings-message {
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.settings-message.hidden {
+    display: none;
+}
+
+.settings-message.success {
+    color: #4caf50;
+}
+
+.settings-message.error {
+    color: #ff6b6b;
+}
+
 /* ---------- Movie list ---------- */
 
 .page-heading {
@@ -122,6 +216,20 @@ header h1 {
     color: #ccc;
     font-size: 1.05rem;
     list-style: none;
+}
+
+.scroll-sentinel {
+    height: 1px;
+}
+
+.loading-more {
+    text-align: center;
+    color: #ccc;
+    padding: 1rem 0;
+}
+
+.loading-more.hidden {
+    display: none;
 }
 
 .movie-list {
@@ -193,6 +301,35 @@ header h1 {
 .movie-title-btn:hover {
     color: #e50914;
     text-decoration: underline;
+}
+
+/* ---------- Back to top ---------- */
+
+.back-to-top {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background-color: #e50914;
+    color: #fff;
+    border: none;
+    font-size: 1.3rem;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    opacity: 0.9;
+    transition: opacity 0.2s, transform 0.2s;
+}
+
+.back-to-top:hover {
+    opacity: 1;
+    transform: translateY(-3px);
+}
+
+.back-to-top.hidden {
+    display: none;
 }
 
 /* ---------- Modal ---------- */
